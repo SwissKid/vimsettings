@@ -27,6 +27,15 @@ command! Showblank set list!
 command! Switchclip :if &l:clipboard == 'unnamed' | :set clipboard=unnamedplus
 	\ | :echo "Clipboard set to X servers" | :else | :set clipboard=unnamed
 	\ | :echo "Clipboard set to local" | :endif  
+"Write and source file for working on vimscripts. Lets you put the args of something to call.
+command! -nargs=? Writesource :silent w | source % | echom "Sourced"
+	\ | if strlen("<args>") | exec "call <args>" | endif
+command! -nargs=? Ws :Writesource <args>
+
+"In case i want to edit it quickly, no need to mess around as much
+command! Editrc :tabe $MYVIMRC
+
+
 "Gonna move this to a scripts folder now
 "command! Reopen 
 
@@ -56,6 +65,7 @@ noremap ; :
 syntax enable
 set foldmethod=syntax
 set smarttab autoindent
+set sw=4	      "no more huge tabs in functions
 filetype plugin indent detect
 set showmatch
 set list listchars=tab:>.,trail:·,extends:§,precedes:¾,nbsp:¤,eol:ϟ  "Show bad whitespace"
@@ -78,6 +88,7 @@ let g:tex_fold_enabled=1
 set omnifunc=syntaxcomplete#Complete
 autocmd BufNewFile,BufRead *.txt set textwidth=80
 autocmd BufNewFile,BufRead .vimrc,*.vim colorscheme elflord
+autocmd BufWrite * if &readonly | echo "File is read only. Write using sudo?" | if nr2char(getchar()) == "y" | :!cp % %."bk" | :w !sudo cat > % | else | echo "Not writing with sudo" | endif | endif  
 "Need A TabEnter page."
 
 
@@ -86,7 +97,7 @@ autocmd BufNewFile,BufRead .vimrc,*.vim colorscheme elflord
 if &diff
 	colorscheme desert
 else
-	colorscheme default "This needs to change as well.
+	colorscheme elflord "This needs to change as well.
 endif
 
 
